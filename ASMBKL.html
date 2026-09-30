@@ -1,0 +1,1237 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบภารกิจ อสม. อำเภอบึงโขงหลง</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@500;600;700&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F3F6EE; --surface:#FFFFFF; --surface-soft:#EDF2E5;
+    --ink:#16302A; --ink-soft:#52655F; --ink-faint:#8A988F;
+    --primary:#0E5C4A; --primary-dark:#0A4638; --primary-tint:#DCEAE2;
+    --accent:#C1667E; --accent-tint:#F6E3E8;
+    --gold:#B4842E; --gold-tint:#F3E7D2;
+    --danger:#B23A3A; --danger-tint:#F5DEDD;
+    --line:#DCE3D5;
+    --shadow: 0 1px 2px rgba(20,40,30,0.04), 0 6px 20px rgba(20,40,30,0.06);
+    --radius: 14px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--ink);font-family:'Sarabun',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.display{font-family:'Noto Serif Thai',serif;color:var(--primary-dark);margin:0;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px 80px;}
+
+  /* ===== Login ===== */
+  .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,var(--primary-dark),var(--primary) 70%);padding:20px;}
+  .login-card{background:#fff;border-radius:18px;padding:34px 30px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25);}
+  .login-hint-box{background:var(--gold-tint);color:#8a6420;font-size:12px;padding:10px 12px;border-radius:10px;margin-top:16px;line-height:1.55;}
+  .field-error{color:var(--danger);font-size:12.5px;margin-top:2px;margin-bottom:8px;display:none;}
+
+  /* ===== Header ===== */
+  .topbar{background:linear-gradient(135deg,var(--primary-dark),var(--primary) 70%);color:#fff;padding:22px 0 0;position:relative;overflow:hidden;}
+  .topbar::after{content:"";position:absolute;right:-60px;top:-80px;width:320px;height:320px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.10), transparent 70%);}
+  .topbar-inner{max-width:1180px;margin:0 auto;padding:0 20px 20px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;position:relative;z-index:1;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand-mark{width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,0.14);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .brand-title{font-family:'Noto Serif Thai',serif;font-size:20px;font-weight:600;color:#fff;line-height:1.3;}
+  .brand-sub{font-size:12.5px;color:rgba(255,255,255,0.75);margin-top:2px;letter-spacing:.2px;}
+  .role-pill{background:rgba(255,255,255,0.92);color:var(--primary-dark);font-size:12px;font-weight:700;padding:6px 12px;border-radius:999px;white-space:nowrap;}
+
+  .bell-btn{position:relative;background:rgba(255,255,255,0.14);border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .bell-dot{position:absolute;top:2px;right:2px;background:var(--accent);color:#fff;font-size:10px;font-weight:800;min-width:16px;height:16px;
+    border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--primary-dark);}
+  .profile-btn{background:rgba(255,255,255,0.14);color:#fff;border:none;border-radius:999px;padding:7px 14px 7px 12px;font-size:13px;font-weight:600;
+    cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'Sarabun',sans-serif;}
+  .dropdown-anchor{position:relative;}
+  .notif-dropdown,.profile-dropdown{position:absolute;right:0;top:calc(100% + 8px);background:#fff;border-radius:14px;box-shadow:var(--shadow);
+    border:1px solid var(--line);z-index:60;color:var(--ink);}
+  .notif-dropdown{width:330px;max-height:420px;overflow-y:auto;}
+  .profile-dropdown{min-width:200px;overflow:hidden;}
+  .profile-dropdown .pd-head{padding:12px 14px;border-bottom:1px solid var(--line);font-size:12.5px;}
+  .profile-dropdown .pd-head span{color:var(--ink-faint);font-size:11.5px;}
+  .profile-dropdown button{width:100%;text-align:left;background:none;border:none;padding:11px 14px;font-size:13.5px;cursor:pointer;color:var(--ink);font-family:'Sarabun',sans-serif;}
+  .profile-dropdown button:hover{background:var(--surface-soft);}
+  .notif-section-title{font-size:11px;font-weight:800;color:var(--ink-soft);padding:12px 14px 6px;text-transform:uppercase;letter-spacing:.4px;}
+  .notif-item{padding:10px 14px;border-top:1px solid var(--line);font-size:12.5px;cursor:pointer;}
+  .notif-item:hover{background:var(--surface-soft);}
+  .notif-item.unread{background:var(--primary-tint);}
+  .notif-item .nt-title{font-weight:700;}
+  .notif-item .nt-meta{color:var(--ink-faint);font-size:11px;margin-top:2px;}
+  .notif-empty{padding:16px 14px;text-align:center;color:var(--ink-faint);font-size:12.5px;}
+
+  /* ===== Tabs ===== */
+  .tabbar{display:flex;gap:4px;margin-top:18px;overflow-x:auto;scrollbar-width:none;}
+  .tabbar::-webkit-scrollbar{display:none;}
+  .tabbtn{flex:none;background:transparent;border:none;color:rgba(255,255,255,0.7);font-family:'Sarabun',sans-serif;font-weight:600;font-size:14px;
+    padding:11px 16px;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:color .15s;}
+  .tabbtn:hover{color:#fff;}
+  .tabbtn.active{color:#fff;border-bottom-color:var(--accent);}
+
+  main{padding-top:26px;}
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+  .section-head h2{font-size:22px;}
+  .section-head p{color:var(--ink-soft);font-size:13.5px;margin-top:4px;}
+
+  /* ===== Buttons ===== */
+  .btn{font-family:'Sarabun',sans-serif;font-weight:600;font-size:14px;border-radius:10px;padding:10px 16px;border:1px solid transparent;
+    cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:transform .06s, box-shadow .15s, background .15s;}
+  .btn:active{transform:scale(0.98);}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-ghost{background:var(--surface);color:var(--primary-dark);border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--primary);}
+  .btn-sm{padding:6px 11px;font-size:12.5px;border-radius:8px;}
+  .btn-danger-outline{background:#fff;color:var(--danger);border-color:var(--danger-tint);}
+  .btn-danger-outline:hover{background:var(--danger-tint);}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .full-w{width:100%;}
+
+  /* ===== Cards ===== */
+  .card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);}
+  .card-pad{padding:20px;}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px;}
+  .stat-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);}
+  .stat-num{font-family:'Noto Serif Thai',serif;font-size:30px;color:var(--primary-dark);font-weight:700;line-height:1;}
+  .stat-label{font-size:12.5px;color:var(--ink-soft);margin-top:8px;font-weight:600;}
+  .stat-card.accent .stat-num{color:var(--accent);}
+  .stat-card.gold .stat-num{color:var(--gold);}
+  .dash-grid{display:grid;grid-template-columns:1.15fr 0.85fr;gap:18px;}
+  @media(max-width:860px){.dash-grid{grid-template-columns:1fr;}}
+  .lake-caption{font-size:12px;color:var(--ink-faint);text-align:center;margin-top:4px;}
+  .unit-node{cursor:pointer;}
+  .unit-node text{font-family:'Sarabun',sans-serif;pointer-events:none;}
+  .mini-unit-list{display:flex;flex-direction:column;gap:0;margin-top:14px;}
+  .mini-unit-row{display:flex;justify-content:space-between;align-items:center;padding:10px 4px;border-top:1px solid var(--line);font-size:13.5px;cursor:pointer;}
+  .mini-unit-row:hover{background:var(--surface-soft);}
+  .mini-unit-row .name{font-weight:600;}
+  .mini-unit-row .count{color:var(--ink-soft);font-size:12.5px;}
+  .mini-unit-row.active{background:var(--primary-tint);}
+  .task-mini{display:flex;flex-direction:column;gap:10px;}
+  .task-mini-item{border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;}
+  .task-mini-item .t{font-weight:700;font-size:13.5px;}
+  .task-mini-item .m{font-size:12px;color:var(--ink-soft);margin-top:2px;}
+
+  /* ===== Badges ===== */
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap;}
+  .badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+  .b-visit{background:var(--primary-tint);color:var(--primary-dark);}
+  .b-screen{background:var(--gold-tint);color:var(--gold);}
+  .b-alert{background:var(--danger-tint);color:var(--danger);}
+  .b-other{background:var(--surface-soft);color:var(--ink-soft);}
+  .b-status-assigned{background:var(--surface-soft);color:var(--ink-soft);}
+  .b-status-progress{background:var(--gold-tint);color:var(--gold);}
+  .b-status-done{background:var(--primary-tint);color:var(--primary-dark);}
+  .due-badge-warn{background:var(--gold-tint);color:var(--gold);}
+  .due-badge-danger{background:var(--danger-tint);color:var(--danger);}
+
+  /* ===== Toolbar / forms ===== */
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;}
+  select, input[type=text], input[type=date], input[type=tel], input[type=password], textarea{
+    font-family:'Sarabun',sans-serif;font-size:13.5px;border:1px solid var(--line);border-radius:9px;padding:9px 12px;background:#fff;color:var(--ink);outline:none;}
+  select:focus, input:focus, textarea:focus{border-color:var(--primary);}
+  .search-box{position:relative;flex:1;min-width:180px;}
+  .search-box input{width:100%;padding-left:34px;}
+  .search-box svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.45;}
+
+  .worker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;}
+  .worker-card{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff;}
+  .worker-card .wname{font-weight:700;font-size:14.5px;}
+  .worker-card .wmeta{font-size:12px;color:var(--ink-soft);margin-top:3px;}
+  .worker-card .wactions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--primary-tint);color:var(--primary-dark);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;margin-bottom:8px;}
+
+  .empty-state{text-align:center;padding:50px 20px;color:var(--ink-soft);}
+  .empty-state .icon{font-size:32px;margin-bottom:10px;}
+  .empty-state .title{font-weight:700;color:var(--ink);margin-bottom:4px;}
+  .empty-state .sub{font-size:13px;}
+
+  .task-card{border:1px solid var(--line);border-radius:14px;padding:16px 18px;background:#fff;margin-bottom:12px;}
+  .task-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;}
+  .task-title{font-weight:700;font-size:15.5px;}
+  .task-detail{font-size:13px;color:var(--ink-soft);margin-top:4px;line-height:1.55;}
+  .task-meta-row{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-faint);margin-top:10px;}
+  .task-meta-row span{display:flex;align-items:center;gap:5px;}
+  .task-location-line{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--primary-dark);margin-top:8px;}
+  .task-location-line a{color:var(--primary-dark);font-weight:700;text-decoration:none;}
+  .task-location-line a:hover{text-decoration:underline;}
+  .assignee-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px;}
+  .assignee-chip{display:flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:999px;padding:5px 6px 5px 10px;font-size:12.5px;background:var(--surface-soft);}
+  .assignee-chip select{border:none;background:transparent;font-size:11.5px;font-weight:700;padding:2px 4px;cursor:pointer;}
+  .assignee-chip .icobtn{background:none;border:none;cursor:pointer;font-size:13px;padding:3px 5px;border-radius:6px;}
+  .assignee-chip .icobtn:hover{background:#fff;}
+  .report-box{margin-top:10px;background:var(--surface-soft);border-radius:10px;padding:10px 12px;font-size:12.5px;}
+  .report-box .rb-head{font-weight:700;margin-bottom:3px;}
+  .status-btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;align-items:center;}
+
+  .pin-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .pin-status{font-size:12px;color:var(--ink-soft);}
+
+  /* ===== Modal ===== */
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,30,25,0.45);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto;z-index:50;}
+  .modal{background:#fff;border-radius:16px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25);animation:pop .16s ease-out;}
+  @keyframes pop{from{opacity:0;transform:translateY(6px) scale(.98);}to{opacity:1;transform:none;}}
+  .modal-head{padding:20px 22px 0;display:flex;justify-content:space-between;align-items:center;}
+  .modal-head h3{font-size:18px;}
+  .modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-soft);line-height:1;}
+  .modal-body{padding:16px 22px 22px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:700;color:var(--ink-soft);margin-bottom:6px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:480px){.field-row{grid-template-columns:1fr;}}
+  .chip-select{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip-opt{border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13px;cursor:pointer;background:#fff;font-weight:600;color:var(--ink-soft);}
+  .chip-opt.selected{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .worker-pick-list{max-height:220px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;padding:6px;}
+  .worker-pick-row{display:flex;align-items:center;gap:9px;padding:8px 8px;border-radius:7px;font-size:13.5px;cursor:pointer;}
+  .worker-pick-row:hover{background:var(--surface-soft);}
+  .worker-pick-row input{accent-color:var(--primary);}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:6px;}
+  .hint{font-size:12px;color:var(--ink-faint);margin-top:6px;}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--primary-dark);color:#fff;padding:11px 20px;border-radius:999px;
+    font-size:13.5px;font-weight:600;box-shadow:var(--shadow);z-index:80;animation:toastin .18s ease-out;}
+  @keyframes toastin{from{opacity:0;transform:translate(-50%,8px);}to{opacity:1;transform:translate(-50%,0);}}
+  .unit-heading-chip{display:inline-block;background:var(--surface-soft);color:var(--ink-soft);font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;margin-bottom:10px;}
+  .loading-msg{padding:60px 0;text-align:center;color:var(--ink-soft);font-size:14px;}
+</style>
+</head>
+<body>
+
+<div class="login-wrap" id="loginScreen" style="display:none;"></div>
+
+<div id="appShell" style="display:none;">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.5-5.1-9.7-9.6C.6 7.9 2.4 4.2 6 3.3c2.2-.5 4.3.5 6 2.4 1.7-1.9 3.8-2.9 6-2.4 3.6.9 5.4 4.6 3.7 8.1C19.5 15.9 12 21 12 21z" fill="white" opacity="0.9"/></svg>
+        </div>
+        <div>
+          <div class="brand-title">ระบบมอบหมายภารกิจ อสม.</div>
+          <div class="brand-sub">อำเภอบึงโขงหลง · สำนักงานสาธารณสุขอำเภอ</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <span class="role-pill" id="rolePill"></span>
+        <div class="dropdown-anchor">
+          <button class="bell-btn" id="bellBtn">🔔<span class="bell-dot" id="bellDot" style="display:none;"></span></button>
+          <div id="notifDropdown"></div>
+        </div>
+        <div class="dropdown-anchor">
+          <button class="profile-btn" id="profileBtn">👤 <span id="profileName"></span> ▾</button>
+          <div id="profileDropdown"></div>
+        </div>
+      </div>
+    </div>
+    <div class="wrap" style="padding-bottom:0;">
+      <div class="tabbar" id="tabbar"></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <main id="main"><div class="loading-msg">กำลังโหลดข้อมูล…</div></main>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+/* ============================= DATA MODEL ============================= */
+const UNITS = [
+  {id:'u1', name:'รพ.สต.โพธิ์หมากแข้ง', short:'โพธิ์หมากแข้ง'},
+  {id:'u2', name:'รพ.สต.ดงบัง', short:'ดงบัง'},
+  {id:'u3', name:'รพ.สต.ท่าดอกคำ', short:'ท่าดอกคำ'},
+  {id:'u4', name:'รพ.สต.บึงโขงหลง', short:'บึงโขงหลง'},
+  {id:'u5', name:'ศูนย์สุขภาพชุมชนโรงพยาบาลบึงโขงหลง', short:'ศสช.รพ.บึงโขงหลง'},
+];
+const TASK_TYPES = [
+  {id:'visit',  name:'เยี่ยมบ้าน',        cls:'b-visit'},
+  {id:'screen', name:'คัดกรองสุขภาพ',     cls:'b-screen'},
+  {id:'alert',  name:'แจ้งเตือนผลิตภัณฑ์', cls:'b-alert'},
+  {id:'other',  name:'อื่นๆ',             cls:'b-other'},
+];
+const STATUSES = ['มอบหมายแล้ว','กำลังดำเนินการ','เสร็จสิ้น'];
+const STATUS_CLASS = {'มอบหมายแล้ว':'b-status-assigned','กำลังดำเนินการ':'b-status-progress','เสร็จสิ้น':'b-status-done'};
+const ROLE_LABEL = {admin:'แอดมิน สสอ.', staff:'จนท.หน่วยบริการ', asm:'อสม.'};
+
+let workers = [];        // {id, name, phone, unitId, village}
+let tasks = [];          // {id,title,typeId,detail,dueDate,unitId,location,workerIds:[],status:{},reports:{},createdAt}
+let users = [];          // {id,username,password,role,unitId,workerId,displayName,active}
+let notifications = [];  // {id,unitId,taskId,workerId,title,message,createdAt,readBy:[]}
+
+let currentUser = null;
+let role = 'admin';
+let staffUnitId = UNITS[0].id;
+let currentAsmWorkerId = null;
+let activeTab = 'dashboard';
+let dashUnitFilter = null;
+let workerFilterUnit = null;
+let workerSearch = '';
+let taskFilterUnit = null;
+let taskFilterStatus = 'all';
+
+/* ============================= STORAGE ============================= */
+function uid(p){ return p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+/* ===== Google Sheets backend (optional) =====
+   1. Deploy the provided Apps Script as a Web App (Execute as: Me, Access: Anyone).
+   2. Paste the Web App URL below between the quotes.
+   3. Leave blank to keep using Claude's built-in storage instead. */
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzEG4QsAPwRKPSqtXjwiE6jk2dueaKrkqfw9lSw4GC6uj-8MmfEpkO2ehV-ILvMMPAI/exec';
+
+const WORKERS_HEADERS = ['id','name','unitId','village','phone'];
+const TASKS_HEADERS = ['id','title','typeId','detail','dueDate','unitId','location','workerIds','status','reports','createdAt'];
+const USERS_HEADERS = ['id','username','password','role','unitId','workerId','displayName','active'];
+const NOTIF_HEADERS = ['id','unitId','taskId','workerId','title','message','createdAt','readBy'];
+
+function safeParse(v, fallback){
+  if(v===null || v===undefined || v==='') return fallback;
+  if(typeof v!=='string') return v;
+  try{ return JSON.parse(v); }catch(e){ return fallback; }
+}
+async function gasList(sheet){
+  const res = await fetch(GAS_URL + '?action=list&sheet=' + encodeURIComponent(sheet));
+  const data = await res.json();
+  return data.ok ? data.rows : [];
+}
+async function gasSaveAll(sheet, headers, rows){
+  await fetch(GAS_URL, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'}, // keeps this a "simple request" so Apps Script doesn't need to handle CORS preflight
+    body: JSON.stringify({action:'saveAll', sheet, headers, rows})
+  });
+}
+async function loadJSON(key, fallback){
+  try{ const r = await window.storage.get(key, true); return r && r.value ? JSON.parse(r.value) : fallback; }
+  catch(e){ return fallback; }
+}
+async function loadData(){
+  if(GAS_URL){
+    try{
+      const [wRows,tRows,uRows,nRows] = await Promise.all([gasList('Workers'),gasList('Tasks'),gasList('Users'),gasList('Notifications')]);
+      workers = wRows;
+      tasks = tRows.map(t=>({...t,
+        location: safeParse(t.location,null), workerIds: safeParse(t.workerIds,[]),
+        status: safeParse(t.status,{}), reports: safeParse(t.reports,{}),
+        createdAt: Number(t.createdAt)||Date.now()}));
+      users = uRows.map(u=>({...u, active: safeParse(u.active, true)}));
+      notifications = nRows.map(n=>({...n, readBy: safeParse(n.readBy, []), createdAt: Number(n.createdAt)||Date.now()}));
+    }catch(e){ showToast('เชื่อมต่อ Google Sheets ไม่สำเร็จ ตรวจสอบ GAS_URL และการเผยแพร่ Web App'); }
+  } else {
+    workers = await loadJSON('asm_workers', []);
+    tasks = await loadJSON('asm_tasks', []);
+    users = await loadJSON('asm_users', []);
+    notifications = await loadJSON('asm_notifications', []);
+  }
+}
+async function saveWorkers(){
+  if(GAS_URL){ try{ await gasSaveAll('Workers', WORKERS_HEADERS, workers); }catch(e){ showToast('บันทึกไป Google Sheets ไม่สำเร็จ'); } }
+  else { try{ await window.storage.set('asm_workers', JSON.stringify(workers), true); }catch(e){ showToast('บันทึกไม่สำเร็จ'); } }
+}
+async function saveTasks(){
+  if(GAS_URL){
+    const rows = tasks.map(t=>({...t,
+      location: JSON.stringify(t.location||null), workerIds: JSON.stringify(t.workerIds||[]),
+      status: JSON.stringify(t.status||{}), reports: JSON.stringify(t.reports||{})}));
+    try{ await gasSaveAll('Tasks', TASKS_HEADERS, rows); }catch(e){ showToast('บันทึกไป Google Sheets ไม่สำเร็จ'); }
+  } else { try{ await window.storage.set('asm_tasks', JSON.stringify(tasks), true); }catch(e){ showToast('บันทึกไม่สำเร็จ'); } }
+}
+async function saveUsers(){
+  if(GAS_URL){
+    const rows = users.map(u=>({...u, active: JSON.stringify(u.active!==false)}));
+    try{ await gasSaveAll('Users', USERS_HEADERS, rows); }catch(e){ showToast('บันทึกไป Google Sheets ไม่สำเร็จ'); }
+  } else { try{ await window.storage.set('asm_users', JSON.stringify(users), true); }catch(e){ showToast('บันทึกไม่สำเร็จ'); } }
+}
+async function saveNotifications(){
+  if(GAS_URL){
+    const rows = notifications.map(n=>({...n, readBy: JSON.stringify(n.readBy||[])}));
+    try{ await gasSaveAll('Notifications', NOTIF_HEADERS, rows); }catch(e){ showToast('บันทึกไป Google Sheets ไม่สำเร็จ'); }
+  } else { try{ await window.storage.set('asm_notifications', JSON.stringify(notifications), true); }catch(e){ showToast('บันทึกไม่สำเร็จ'); } }
+}
+
+/* ============================= HELPERS ============================= */
+function unitName(id){ const u=UNITS.find(x=>x.id===id); return u?u.name:'-'; }
+function unitShort(id){ const u=UNITS.find(x=>x.id===id); return u?u.short:'-'; }
+function typeInfo(id){ return TASK_TYPES.find(t=>t.id===id)||TASK_TYPES[3]; }
+function workerById(id){ return workers.find(w=>w.id===id); }
+function visibleUnits(){ return role==='admin' ? UNITS : UNITS.filter(u=>u.id===staffUnitId); }
+function initials(name){ const p=(name||'').trim().split(/\s+/); return (p[0]?p[0][0]:'')+(p[1]?p[1][0]:''); }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDate(d){
+  if(!d) return '-';
+  const dt = new Date(d+'T00:00:00'); if(isNaN(dt)) return d;
+  const months=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  return dt.getDate()+' '+months[dt.getMonth()]+' '+(dt.getFullYear()+543);
+}
+function timeAgo(ts){
+  const diff=Date.now()-ts, min=Math.floor(diff/60000);
+  if(min<1) return 'เมื่อสักครู่';
+  if(min<60) return min+' นาทีที่แล้ว';
+  const hr=Math.floor(min/60); if(hr<24) return hr+' ชม.ที่แล้ว';
+  return Math.floor(hr/24)+' วันที่แล้ว';
+}
+function taskProgress(t){
+  const total=t.workerIds.length;
+  if(total===0) return {done:0,total:0,pct:0};
+  const done=t.workerIds.filter(id=>t.status[id]==='เสร็จสิ้น').length;
+  return {done,total,pct:Math.round(done/total*100)};
+}
+function dueBadge(t){
+  const p=taskProgress(t);
+  if(p.total>0 && p.done===p.total) return '';
+  if(!t.dueDate) return '';
+  const now=new Date(); now.setHours(0,0,0,0);
+  const due=new Date(t.dueDate+'T00:00:00');
+  const diff=Math.round((due-now)/86400000);
+  if(diff<0) return `<span class="badge due-badge-danger">⏰ เกินกำหนด ${Math.abs(diff)} วัน</span>`;
+  if(diff<=2) return `<span class="badge due-badge-warn">🔔 ${diff===0?'ครบกำหนดวันนี้':'อีก '+diff+' วันครบกำหนด'}</span>`;
+  return '';
+}
+function mapLink(loc){ return loc && loc.lat!=null && loc.lng!=null ? `https://www.google.com/maps?q=${loc.lat},${loc.lng}` : null; }
+function locationLine(loc){
+  if(!loc) return '';
+  const link = mapLink(loc);
+  return `<div class="task-location-line">📍 ${esc(loc.label||'ตำแหน่งปฏิบัติงาน')}${link?` · <a href="${link}" target="_blank" rel="noopener">เปิดแผนที่</a>`:''}</div>`;
+}
+function showToast(msg){
+  const root=document.getElementById('toastRoot');
+  const el=document.createElement('div'); el.className='toast'; el.textContent=msg;
+  root.innerHTML=''; root.appendChild(el);
+  setTimeout(()=>el.remove(), 2400);
+}
+
+/* ============================= NOTIFICATIONS ============================= */
+function computeDueNotifs(){
+  let relevant;
+  if(role==='asm'){ relevant = tasks.filter(t=>t.workerIds.includes(currentAsmWorkerId)); }
+  else { const scope = role==='admin'?UNITS.map(u=>u.id):[staffUnitId]; relevant = tasks.filter(t=>scope.includes(t.unitId)); }
+  const items=[]; const now=new Date(); now.setHours(0,0,0,0);
+  relevant.forEach(t=>{
+    if(!t.dueDate) return;
+    const p=taskProgress(t);
+    if(p.total>0 && p.done===p.total) return;
+    const due=new Date(t.dueDate+'T00:00:00');
+    const diff=Math.round((due-now)/86400000);
+    if(diff<0) items.push({id:'due_'+t.id, kind:'overdue', title:t.title, taskId:t.id, message:'เกินกำหนด '+Math.abs(diff)+' วัน · '+unitShort(t.unitId)});
+    else if(diff<=2) items.push({id:'due_'+t.id, kind:'soon', title:t.title, taskId:t.id, message:(diff===0?'ครบกำหนดวันนี้':'ครบกำหนดใน '+diff+' วัน')+' · '+unitShort(t.unitId)});
+  });
+  return items;
+}
+function scopedReportNotifs(){
+  if(role==='asm') return [];
+  const scope = role==='admin'?UNITS.map(u=>u.id):[staffUnitId];
+  return notifications.filter(n=>scope.includes(n.unitId)).sort((a,b)=>b.createdAt-a.createdAt);
+}
+function unreadReportCount(){
+  if(!currentUser) return 0;
+  return scopedReportNotifs().filter(n=>!(n.readBy||[]).includes(currentUser.id)).length;
+}
+function renderNotifDropdown(){
+  const due = computeDueNotifs();
+  const reports = scopedReportNotifs().slice(0,12);
+  return `<div class="notif-dropdown" id="notifDropdownInner">
+    <div class="notif-section-title">ภารกิจใกล้ครบ / เกินกำหนด</div>
+    ${due.length===0?'<div class="notif-empty">ไม่มีภารกิจใกล้ครบกำหนด</div>':
+      due.map(d=>`<div class="notif-item" data-goto-task="${d.taskId}">
+        <div class="nt-title" style="color:${d.kind==='overdue'?'var(--danger)':'var(--gold)'};">${d.kind==='overdue'?'⏰':'🔔'} ${esc(d.title)}</div>
+        <div class="nt-meta">${esc(d.message)}</div>
+      </div>`).join('')}
+    ${role!=='asm' ? `
+      <div class="notif-section-title">รายงานจาก อสม.</div>
+      ${reports.length===0?'<div class="notif-empty">ยังไม่มีรายงานเข้ามา</div>':
+        reports.map(n=>{
+          const unread = !(n.readBy||[]).includes(currentUser.id);
+          return `<div class="notif-item ${unread?'unread':''}" data-read-notif="${n.id}" data-goto-task="${n.taskId||''}">
+            <div class="nt-title">${unread?'🟢 ':''}${esc(n.title)}</div>
+            <div class="nt-meta">${esc(n.message)} · ${timeAgo(n.createdAt)}</div>
+          </div>`;
+        }).join('')}` : ''}
+  </div>`;
+}
+
+/* ============================= LOGIN ============================= */
+function renderLogin(){
+  document.getElementById('appShell').style.display='none';
+  const scr = document.getElementById('loginScreen');
+  scr.style.display='flex';
+  const seeded = users.find(u=>u.username==='admin' && u.password==='Bkl@2569');
+  scr.innerHTML = `
+    <div class="login-card">
+      <div style="width:52px;height:52px;border-radius:14px;background:var(--primary-tint);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 21s-7.5-5.1-9.7-9.6C.6 7.9 2.4 4.2 6 3.3c2.2-.5 4.3.5 6 2.4 1.7-1.9 3.8-2.9 6-2.4 3.6.9 5.4 4.6 3.7 8.1C19.5 15.9 12 21 12 21z" fill="#0E5C4A"/></svg>
+      </div>
+      <h2 style="text-align:center;font-size:19px;">ระบบภารกิจ อสม.</h2>
+      <p style="text-align:center;color:var(--ink-soft);font-size:12.5px;margin-top:4px;">อำเภอบึงโขงหลง</p>
+      <div class="field" style="margin-top:20px;"><label>ชื่อผู้ใช้งาน</label><input type="text" id="loginUser" class="full-w" placeholder="username" autocomplete="username"></div>
+      <div class="field"><label>รหัสผ่าน</label><input type="password" id="loginPass" class="full-w" placeholder="••••••••" autocomplete="current-password"></div>
+      <div class="field-error" id="loginError"></div>
+      <button class="btn btn-primary full-w" id="btnLogin" style="justify-content:center;">เข้าสู่ระบบ</button>
+      ${seeded?`<div class="login-hint-box">บัญชีผู้ดูแลระบบเริ่มต้น (ใช้ครั้งแรกเท่านั้น):<br><b>admin</b> / <b>Bkl@2569</b><br>กรุณาเปลี่ยนรหัสผ่านหลังเข้าใช้งานครั้งแรก</div>`:''}
+      <p style="text-align:center;color:var(--ink-faint);font-size:11.5px;margin-top:16px;">หากยังไม่มีบัญชีผู้ใช้งาน กรุณาติดต่อแอดมิน สสอ.บึงโขงหลง</p>
+    </div>`;
+  document.getElementById('btnLogin').onclick = attemptLogin;
+  document.getElementById('loginPass').onkeydown = (e)=>{ if(e.key==='Enter') attemptLogin(); };
+  document.getElementById('loginUser').onkeydown = (e)=>{ if(e.key==='Enter') document.getElementById('loginPass').focus(); };
+}
+function attemptLogin(){
+  const uname=document.getElementById('loginUser').value.trim();
+  const pass=document.getElementById('loginPass').value;
+  const err=document.getElementById('loginError');
+  const u=users.find(x=>x.username.toLowerCase()===uname.toLowerCase() && x.active!==false);
+  if(!u || u.password!==pass){ err.textContent='ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง'; err.style.display='block'; return; }
+  currentUser=u; role=u.role;
+  if(u.role!=='admin') staffUnitId=u.unitId;
+  if(u.role==='asm'){ currentAsmWorkerId=u.workerId; activeTab='mytasks'; }
+  else activeTab='dashboard';
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('appShell').style.display='block';
+  renderShell(); renderMain();
+}
+function logout(){ currentUser=null; role='admin'; activeTab='dashboard'; renderLogin(); }
+
+/* ============================= SHELL ============================= */
+function renderShell(){
+  document.getElementById('rolePill').textContent =
+    role==='admin' ? 'ดูแลทั้ง 5 หน่วยบริการ' : role==='staff' ? 'สังกัด '+unitShort(staffUnitId) : 'อสม. · '+unitShort(staffUnitId);
+  document.getElementById('profileName').textContent = currentUser.displayName || currentUser.username;
+
+  const dueCount = computeDueNotifs().length + unreadReportCount();
+  const bellDot = document.getElementById('bellDot');
+  if(dueCount>0){ bellDot.style.display='flex'; bellDot.textContent = dueCount>9?'9+':dueCount; } else bellDot.style.display='none';
+
+  document.getElementById('bellBtn').onclick=(e)=>{
+    e.stopPropagation();
+    const dd=document.getElementById('notifDropdown');
+    dd.innerHTML = dd.innerHTML? '' : renderNotifDropdown();
+    document.getElementById('profileDropdown').innerHTML='';
+    if(dd.firstChild){ dd.onclick=(ev)=>ev.stopPropagation();
+      dd.querySelectorAll('[data-goto-task]').forEach(it=>{
+        it.onclick=()=>{
+          if(it.dataset.readNotif){ const n=notifications.find(x=>x.id===it.dataset.readNotif); if(n){ n.readBy=n.readBy||[]; if(!n.readBy.includes(currentUser.id)){ n.readBy.push(currentUser.id); saveNotifications(); } } }
+          dd.innerHTML='';
+          activeTab = role==='asm' ? 'mytasks' : 'tasks';
+          renderShell(); renderMain();
+        };
+      });
+    }
+  };
+  document.getElementById('profileBtn').onclick=(e)=>{
+    e.stopPropagation();
+    const dd=document.getElementById('profileDropdown');
+    dd.innerHTML = dd.innerHTML? '' : renderProfileDropdown();
+    document.getElementById('notifDropdown').innerHTML='';
+    if(dd.firstChild){
+      dd.onclick=(ev)=>ev.stopPropagation();
+      document.getElementById('pdChangePass').onclick=()=>{ dd.innerHTML=''; openChangePasswordModal(); };
+      document.getElementById('pdLogout').onclick=()=>{ dd.innerHTML=''; logout(); };
+    }
+  };
+
+  const tabs = role==='asm' ? [{id:'mytasks',label:'ภารกิจของฉัน'}] : [
+    {id:'dashboard', label:'ภาพรวม'},
+    {id:'workers', label:'อสม.'},
+    {id:'assign', label:'มอบหมายภารกิจ'},
+    {id:'tasks', label:'ภารกิจทั้งหมด'},
+  ];
+  if(role==='admin'){ tabs.push({id:'units', label:'หน่วยบริการ'}); tabs.push({id:'users', label:'ผู้ใช้งาน'}); }
+  if(!tabs.find(t=>t.id===activeTab)) activeTab=tabs[0].id;
+
+  const tabbar=document.getElementById('tabbar');
+  tabbar.innerHTML = tabs.map(t=>`<button class="tabbtn ${activeTab===t.id?'active':''}" data-tab="${t.id}">${t.label}</button>`).join('');
+  tabbar.querySelectorAll('.tabbtn').forEach(b=>{ b.onclick=()=>{ activeTab=b.dataset.tab; renderShell(); renderMain(); }; });
+}
+function renderProfileDropdown(){
+  return `<div id="profileDropdownInner">
+    <div class="pd-head"><b>${esc(currentUser.displayName||currentUser.username)}</b><br><span>@${esc(currentUser.username)} · ${ROLE_LABEL[currentUser.role]}</span></div>
+    <button id="pdChangePass">🔑 เปลี่ยนรหัสผ่าน</button>
+    <button id="pdLogout" style="color:var(--danger);">↪ ออกจากระบบ</button>
+  </div>`;
+}
+document.addEventListener('click', ()=>{
+  const nd=document.getElementById('notifDropdown'); if(nd) nd.innerHTML='';
+  const pd=document.getElementById('profileDropdown'); if(pd) pd.innerHTML='';
+});
+
+function renderMain(){
+  const main=document.getElementById('main');
+  if(activeTab==='dashboard') main.innerHTML=renderDashboard();
+  else if(activeTab==='workers') main.innerHTML=renderWorkers();
+  else if(activeTab==='assign') main.innerHTML=renderAssign();
+  else if(activeTab==='tasks') main.innerHTML=renderTasks();
+  else if(activeTab==='units') main.innerHTML=renderUnits();
+  else if(activeTab==='users') main.innerHTML=renderUsers();
+  else if(activeTab==='mytasks') main.innerHTML=renderMyTasks();
+  attachMainHandlers();
+}
+
+/* ============================= DASHBOARD ============================= */
+function renderDashboard(){
+  const unitsToShow=visibleUnits();
+  const unitIds=unitsToShow.map(u=>u.id);
+  const wCount=workers.filter(w=>unitIds.includes(w.unitId)).length;
+  const relevantTasks=tasks.filter(t=>unitIds.includes(t.unitId));
+  let doneCount=0, progressCount=0, assignedCount=0;
+  relevantTasks.forEach(t=>t.workerIds.forEach(wid=>{
+    const st=t.status[wid];
+    if(st==='เสร็จสิ้น') doneCount++; else if(st==='กำลังดำเนินการ') progressCount++; else assignedCount++;
+  }));
+  const filterUnitIds = dashUnitFilter?[dashUnitFilter]:unitIds;
+  const filteredTasks = relevantTasks.filter(t=>filterUnitIds.includes(t.unitId)).slice().sort((a,b)=>b.createdAt-a.createdAt).slice(0,6);
+
+  return `
+    <div class="section-head">
+      <div><h2>ภาพรวมการปฏิบัติงาน</h2><p>${role==='admin'?'ภาพรวมทั้ง 5 หน่วยบริการในอำเภอบึงโขงหลง':'ภาพรวมของ '+esc(unitName(staffUnitId))}</p></div>
+      <button class="btn btn-primary" data-goto="assign">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.4" stroke-linecap="round"/></svg>
+        มอบหมายภารกิจใหม่
+      </button>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-num">${wCount}</div><div class="stat-label">อสม. ทั้งหมด</div></div>
+      <div class="stat-card"><div class="stat-num">${relevantTasks.length}</div><div class="stat-label">ภารกิจที่มอบหมาย</div></div>
+      <div class="stat-card gold"><div class="stat-num">${assignedCount+progressCount}</div><div class="stat-label">รอดำเนินการ / กำลังทำ</div></div>
+      <div class="stat-card accent"><div class="stat-num">${doneCount}</div><div class="stat-label">งานเสร็จสิ้น (รายอสม.)</div></div>
+    </div>
+    <div class="dash-grid">
+      <div class="card card-pad">
+        <h3 style="font-size:15px;margin-bottom:2px;">แผนที่หน่วยบริการ${dashUnitFilter?' · '+esc(unitShort(dashUnitFilter)):''}</h3>
+        <p style="font-size:12px;color:var(--ink-soft);margin:0 0 14px;">คลิกจุดบนแผนที่เพื่อกรองตามหน่วยบริการ</p>
+        ${renderLakeMap(unitsToShow)}
+      </div>
+      <div class="card card-pad">
+        <h3 style="font-size:15px;margin-bottom:10px;">ภารกิจล่าสุด</h3>
+        ${filteredTasks.length===0?`
+          <div class="empty-state" style="padding:30px 10px;"><div class="icon">🗒️</div><div class="title">ยังไม่มีภารกิจ</div><div class="sub">เริ่มมอบหมายภารกิจให้ อสม. ได้ที่แท็บ "มอบหมายภารกิจ"</div></div>`:
+          `<div class="task-mini">${filteredTasks.map(t=>{
+            const p=taskProgress(t); const ti=typeInfo(t.typeId);
+            return `<div class="task-mini-item">
+              <div><div class="t">${esc(t.title)}</div><div class="m">${esc(unitShort(t.unitId))} · ครบกำหนด ${fmtDate(t.dueDate)}</div></div>
+              <div style="text-align:right;"><span class="badge ${ti.cls}"><span class="badge-dot"></span>${ti.name}</span><div class="m" style="margin-top:5px;">${p.done}/${p.total} เสร็จสิ้น</div></div>
+            </div>`;
+          }).join('')}</div>`}
+      </div>
+    </div>`;
+}
+function renderLakeMap(unitsToShow){
+  const positions={u1:[95,70],u2:[240,48],u3:[335,150],u4:[230,235],u5:[90,205]};
+  const nodes=unitsToShow.map(u=>{
+    const [x,y]=positions[u.id];
+    const openCount=tasks.filter(t=>t.unitId===u.id).reduce((s,t)=>s+t.workerIds.filter(wid=>t.status[wid]!=='เสร็จสิ้น').length,0);
+    const isActive=dashUnitFilter===u.id;
+    const fill=isActive?'var(--accent)':(openCount>0?'var(--gold)':'var(--primary)');
+    return `<g class="unit-node" data-unit="${u.id}" transform="translate(${x},${y})">
+      <circle r="13" fill="${fill}" opacity="0.16"></circle>
+      <circle r="7" fill="${fill}"></circle>
+      <text x="0" y="26" text-anchor="middle" font-size="11" font-weight="700" fill="var(--ink)">${esc(u.short)}</text>
+      ${openCount>0?`<text x="0" y="4" text-anchor="middle" font-size="9" font-weight="700" fill="white">${openCount}</text>`:''}
+    </g>`;
+  }).join('');
+  return `
+    <div style="padding:8px 4px 4px;">
+      <svg viewBox="0 0 420 300" width="100%" height="auto" style="max-height:270px;">
+        <path d="M180,40 C260,20 340,70 350,140 C360,210 300,260 220,255 C150,250 90,270 55,220 C20,170 40,110 90,75 C120,52 150,50 180,40 Z" fill="var(--primary-tint)" stroke="var(--primary)" stroke-width="1.3" opacity="0.9"/>
+        <path d="M120,150 q20,-14 40,0 q20,14 40,0" stroke="var(--primary)" stroke-width="1.6" fill="none" opacity="0.35"/>
+        <path d="M170,180 q20,-14 40,0 q20,14 40,0" stroke="var(--primary)" stroke-width="1.6" fill="none" opacity="0.25"/>
+        ${nodes}
+      </svg>
+      <div class="lake-caption">แผนที่แสดงตำแหน่ง 5 หน่วยบริการรอบพื้นที่บึงโขงหลง</div>
+    </div>
+    <div class="mini-unit-list">
+      ${unitsToShow.map(u=>{ const c=workers.filter(w=>w.unitId===u.id).length;
+        return `<div class="mini-unit-row ${dashUnitFilter===u.id?'active':''}" data-unit="${u.id}"><span class="name">${esc(u.name)}</span><span class="count">${c} อสม.</span></div>`;
+      }).join('')}
+      ${dashUnitFilter?`<div class="mini-unit-row" data-unit="__clear__"><span class="name" style="color:var(--accent);">ล้างตัวกรอง</span><span></span></div>`:''}
+    </div>`;
+}
+
+/* ============================= WORKERS ============================= */
+function renderWorkers(){
+  const unitOptions=visibleUnits();
+  const filterUnit = role==='staff' ? staffUnitId : workerFilterUnit;
+  let list=workers.filter(w=>unitOptions.map(u=>u.id).includes(w.unitId));
+  if(filterUnit) list=list.filter(w=>w.unitId===filterUnit);
+  if(workerSearch.trim()) list=list.filter(w=>(w.name+ (w.village||'')).toLowerCase().includes(workerSearch.trim().toLowerCase()));
+
+  return `
+    <div class="section-head">
+      <div><h2>รายชื่อ อสม.</h2><p>${role==='admin'?'จัดการรายชื่อ อสม. ทั้ง 5 หน่วยบริการ':'จัดการรายชื่อ อสม. ในความรับผิดชอบของท่าน'}</p></div>
+      <button class="btn btn-primary" id="btnAddWorker">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="white" stroke-width="2.4" stroke-linecap="round"/></svg>
+        เพิ่ม อสม.
+      </button>
+    </div>
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#52655F" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="#52655F" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" id="workerSearch" placeholder="ค้นหาชื่อ หรือ หมู่บ้าน" value="${esc(workerSearch)}">
+      </div>
+      ${role==='admin'?`<select id="workerUnitFilter"><option value="">ทุกหน่วยบริการ</option>${UNITS.map(u=>`<option value="${u.id}" ${workerFilterUnit===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}</select>`:''}
+    </div>
+    ${list.length===0?`<div class="empty-state"><div class="icon">🧑‍⚕️</div><div class="title">ยังไม่มีรายชื่อ อสม.</div><div class="sub">กดปุ่ม "เพิ่ม อสม." เพื่อเริ่มเพิ่มรายชื่อในหน่วยบริการ</div></div>`:`
+      <div class="worker-grid">
+        ${list.map(w=>{
+          const hasAccount = users.some(u=>u.role==='asm'&&u.workerId===w.id);
+          return `<div class="worker-card">
+            <div class="avatar">${esc(initials(w.name))}</div>
+            <div class="wname">${esc(w.name)}</div>
+            <div class="wmeta">${esc(unitShort(w.unitId))}${w.village?' · หมู่บ้าน'+esc(w.village):''}</div>
+            ${w.phone?`<div class="wmeta">📞 ${esc(w.phone)}</div>`:''}
+            <div class="wmeta">${hasAccount?'🔑 มีบัญชีผู้ใช้งานแล้ว':'ยังไม่มีบัญชีผู้ใช้งาน'}</div>
+            <div class="wactions">
+              <button class="btn btn-ghost btn-sm" data-edit-worker="${w.id}">แก้ไข</button>
+              <button class="btn btn-danger-outline btn-sm" data-del-worker="${w.id}">ลบ</button>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>`}`;
+}
+function workerFormModal(existing){
+  const isEdit=!!existing; const unitOptions=visibleUnits();
+  return `<div class="modal-overlay" id="modalOverlay"><div class="modal">
+    <div class="modal-head"><h3>${isEdit?'แก้ไขข้อมูล อสม.':'เพิ่ม อสม. ใหม่'}</h3><button class="modal-close" id="modalClose">&times;</button></div>
+    <div class="modal-body">
+      <div class="field"><label>ชื่อ-สกุล</label><input type="text" id="fName" class="full-w" placeholder="เช่น นางสมศรี ใจดี" value="${existing?esc(existing.name):''}"></div>
+      <div class="field-row">
+        <div class="field"><label>หน่วยบริการ</label>
+          <select id="fUnit" class="full-w" ${role==='staff'?'disabled':''}>
+            ${(role==='staff'?unitOptions:UNITS).map(u=>`<option value="${u.id}" ${((existing?existing.unitId:staffUnitId)===u.id)?'selected':''}>${esc(u.name)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label>หมู่บ้าน / กลุ่ม</label><input type="text" id="fVillage" class="full-w" placeholder="เช่น หมู่ 3" value="${existing?esc(existing.village||''):''}"></div>
+      </div>
+      <div class="field"><label>เบอร์โทรศัพท์ (ถ้ามี)</label><input type="tel" id="fPhone" class="full-w" placeholder="08x-xxx-xxxx" value="${existing?esc(existing.phone||''):''}"></div>
+      <div class="modal-actions"><button class="btn btn-ghost" id="modalCancel">ยกเลิก</button><button class="btn btn-primary" id="modalSave">${isEdit?'บันทึกการแก้ไข':'เพิ่ม อสม.'}</button></div>
+    </div></div></div>`;
+}
+function openWorkerModal(existingId){
+  const existing=existingId?workerById(existingId):null;
+  document.getElementById('modalRoot').innerHTML=workerFormModal(existing);
+  const overlay=document.getElementById('modalOverlay');
+  const close=()=>overlay.remove();
+  document.getElementById('modalClose').onclick=close;
+  document.getElementById('modalCancel').onclick=close;
+  overlay.onclick=(e)=>{ if(e.target===overlay) close(); };
+  document.getElementById('modalSave').onclick=async ()=>{
+    const name=document.getElementById('fName').value.trim();
+    if(!name){ showToast('กรุณากรอกชื่อ อสม.'); return; }
+    const unitId=document.getElementById('fUnit').value;
+    const village=document.getElementById('fVillage').value.trim();
+    const phone=document.getElementById('fPhone').value.trim();
+    if(existing){ existing.name=name; existing.unitId=unitId; existing.village=village; existing.phone=phone; }
+    else { workers.push({id:uid('w'), name, unitId, village, phone}); }
+    await saveWorkers(); close();
+    showToast(existing?'บันทึกการแก้ไขแล้ว':'เพิ่ม อสม. เรียบร้อยแล้ว');
+    renderMain();
+  };
+}
+
+/* ============================= ASSIGN TASK ============================= */
+let assignSelectedWorkers = new Set();
+let assignUnitId = null;
+let pinLat=null, pinLng=null;
+
+function renderAssign(){
+  assignUnitId = role==='staff' ? staffUnitId : (assignUnitId || (visibleUnits()[0]||UNITS[0]).id);
+  const unitWorkers = workers.filter(w=>w.unitId===assignUnitId);
+  const villages = [...new Set(unitWorkers.map(w=>w.village).filter(Boolean))];
+
+  return `
+    <div class="section-head">
+      <div><h2>ส่งภารกิจให้ อสม. ไปปฏิบัติงาน</h2><p>มอบหมายภารกิจแบบรายบุคคลหรือรายกลุ่ม พร้อมปักหมุดสถานที่และติดตามสถานะ</p></div>
+    </div>
+    <div class="card card-pad">
+      <div class="field-row">
+        <div class="field"><label>ประเภทภารกิจ</label>
+          <div class="chip-select" id="typeChips">${TASK_TYPES.map((t,i)=>`<div class="chip-opt ${i===0?'selected':''}" data-type="${t.id}">${t.name}</div>`).join('')}</div>
+        </div>
+        <div class="field"><label>หน่วยบริการ</label>
+          <select id="fAssignUnit" class="full-w" ${role==='staff'?'disabled':''}>
+            ${(role==='staff'?[UNITS.find(u=>u.id===staffUnitId)]:UNITS).map(u=>`<option value="${u.id}" ${assignUnitId===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>ชื่อภารกิจ</label><input type="text" id="fTaskTitle" class="full-w" placeholder="เช่น เยี่ยมบ้านผู้สูงอายุติดเตียง ม.3"></div>
+      <div class="field"><label>รายละเอียด</label><textarea id="fTaskDetail" class="full-w" rows="3" placeholder="รายละเอียดเพิ่มเติมของภารกิจ"></textarea></div>
+      <div class="field"><label>วันที่ครบกำหนด</label><input type="date" id="fTaskDue" style="max-width:220px;"></div>
+
+      <div class="field">
+        <label>ปักหมุดสถานที่ปฏิบัติงาน (ไม่บังคับ)</label>
+        <div class="pin-row">
+          <button type="button" class="btn btn-ghost btn-sm" id="btnPinLocation">📍 ใช้ตำแหน่งปัจจุบัน</button>
+          <input type="text" id="fLocLabel" placeholder="ชื่อสถานที่ เช่น บ้านเลขที่ 12 ม.3" style="flex:1;min-width:160px;">
+        </div>
+        <div class="field-row" style="margin-top:8px;">
+          <div class="field"><label>ละติจูด</label><input type="text" id="fLocLat" placeholder="เช่น 18.0234" class="full-w"></div>
+          <div class="field"><label>ลองจิจูด</label><input type="text" id="fLocLng" placeholder="เช่น 103.6123" class="full-w"></div>
+        </div>
+        <div class="pin-status" id="pinStatus"></div>
+      </div>
+
+      <div class="field">
+        <label>มอบหมายให้ (เลือกได้หลายคน)</label>
+        <div class="chip-select" style="margin-bottom:10px;">
+          <div class="chip-opt" id="selAllBtn">เลือกทั้งหมดในหน่วยนี้</div>
+          <div class="chip-opt" id="selClearBtn">ล้างการเลือก</div>
+          ${villages.map(v=>`<div class="chip-opt" data-village="${esc(v)}">เฉพาะหมู่บ้าน ${esc(v)}</div>`).join('')}
+        </div>
+        ${unitWorkers.length===0?`<div class="hint">ยังไม่มีรายชื่อ อสม. ในหน่วยบริการนี้ กรุณาเพิ่มรายชื่อที่แท็บ "อสม." ก่อน</div>`:`
+          <div class="worker-pick-list" id="workerPickList">
+            ${unitWorkers.map(w=>`<label class="worker-pick-row"><input type="checkbox" data-wid="${w.id}" ${assignSelectedWorkers.has(w.id)?'checked':''}><span>${esc(w.name)}${w.village?' · หมู่บ้าน'+esc(w.village):''}</span></label>`).join('')}
+          </div>`}
+        <div class="hint" id="selCount">เลือกแล้ว ${assignSelectedWorkers.size} คน</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="btnSendTask" ${unitWorkers.length===0?'disabled':''}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 12l7-7v4c6 0 9 3 9 9-2-2.5-5-3.5-9-3.5v4L4 12z" fill="white"/></svg>
+          ส่งภารกิจ
+        </button>
+      </div>
+    </div>`;
+}
+
+/* ============================= TASKS LIST ============================= */
+function renderTasks(){
+  const unitOptions=visibleUnits();
+  const filterUnit = role==='staff' ? staffUnitId : taskFilterUnit;
+  let list=tasks.filter(t=>unitOptions.map(u=>u.id).includes(t.unitId));
+  if(filterUnit) list=list.filter(t=>t.unitId===filterUnit);
+  if(taskFilterStatus!=='all'){
+    list=list.filter(t=>{ const p=taskProgress(t);
+      if(taskFilterStatus==='done') return p.total>0 && p.done===p.total;
+      if(taskFilterStatus==='open') return p.done<p.total;
+      return true; });
+  }
+  list=list.slice().sort((a,b)=>b.createdAt-a.createdAt);
+
+  return `
+    <div class="section-head"><div><h2>ภารกิจทั้งหมด</h2><p>ติดตามสถานะภารกิจ ตำแหน่งปฏิบัติงาน และรายงานผลจาก อสม. รายบุคคล</p></div></div>
+    <div class="toolbar">
+      ${role==='admin'?`<select id="taskUnitFilter"><option value="">ทุกหน่วยบริการ</option>${UNITS.map(u=>`<option value="${u.id}" ${taskFilterUnit===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}</select>`:''}
+      <select id="taskStatusFilter">
+        <option value="all" ${taskFilterStatus==='all'?'selected':''}>ทุกสถานะ</option>
+        <option value="open" ${taskFilterStatus==='open'?'selected':''}>ยังไม่เสร็จสิ้น</option>
+        <option value="done" ${taskFilterStatus==='done'?'selected':''}>เสร็จสิ้นทั้งหมด</option>
+      </select>
+    </div>
+    ${list.length===0?`<div class="empty-state"><div class="icon">📋</div><div class="title">ไม่พบภารกิจ</div><div class="sub">ลองปรับตัวกรอง หรือไปที่แท็บ "มอบหมายภารกิจ" เพื่อสร้างภารกิจใหม่</div></div>`:
+      list.map(t=>{
+        const ti=typeInfo(t.typeId); const p=taskProgress(t);
+        return `<div class="task-card" id="taskcard_${t.id}">
+          <div class="task-top">
+            <div>
+              <span class="unit-heading-chip">${esc(unitShort(t.unitId))}</span>
+              <div class="task-title">${esc(t.title)}</div>
+              ${t.detail?`<div class="task-detail">${esc(t.detail)}</div>`:''}
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;">
+              <span class="badge ${ti.cls}"><span class="badge-dot"></span>${ti.name}</span>
+              ${dueBadge(t)}
+            </div>
+          </div>
+          <div class="task-meta-row"><span>📅 ครบกำหนด ${fmtDate(t.dueDate)}</span><span>✅ ${p.done}/${p.total} คนเสร็จสิ้น</span></div>
+          ${locationLine(t.location)}
+          <div class="assignee-list">
+            ${t.workerIds.map(wid=>{
+              const w=workerById(wid); const st=t.status[wid]||STATUSES[0];
+              return `<div class="assignee-chip">
+                <span>${w?esc(w.name):'(ไม่พบรายชื่อ)'}</span>
+                <select data-task="${t.id}" data-worker="${wid}" class="statusSel">${STATUSES.map(s=>`<option value="${s}" ${st===s?'selected':''}>${s}</option>`).join('')}</select>
+                <button type="button" class="icobtn" title="บันทึกรายงาน" data-open-report="${t.id}|${wid}">📝</button>
+              </div>`;
+            }).join('')}
+          </div>
+          ${t.workerIds.map(wid=>{
+            const rpt=t.reports&&t.reports[wid]; if(!rpt) return '';
+            const w=workerById(wid);
+            return `<div class="report-box"><div class="rb-head">รายงานจาก ${w?esc(w.name):''}</div>${esc(rpt.note||'-')}${mapLink(rpt.location)?` · <a href="${mapLink(rpt.location)}" target="_blank" rel="noopener">ดูตำแหน่งที่รายงาน</a>`:''}<div class="hint" style="margin-top:4px;">${timeAgo(rpt.at)}</div></div>`;
+          }).join('')}
+        </div>`;
+      }).join('')}`;
+}
+
+/* ============================= MY TASKS (asm) ============================= */
+function renderMyTasks(){
+  const myTasks=tasks.filter(t=>t.workerIds.includes(currentAsmWorkerId)).sort((a,b)=>b.createdAt-a.createdAt);
+  return `
+    <div class="section-head"><div><h2>ภารกิจของฉัน</h2><p>รายการภารกิจที่ได้รับมอบหมาย · ${esc(unitShort(staffUnitId))}</p></div></div>
+    ${myTasks.length===0?`<div class="empty-state"><div class="icon">✅</div><div class="title">ยังไม่มีภารกิจที่ได้รับมอบหมาย</div><div class="sub">เมื่อเจ้าหน้าที่มอบหมายงานให้ท่าน จะแสดงที่นี่</div></div>`:
+      myTasks.map(t=>{
+        const ti=typeInfo(t.typeId); const st=t.status[currentAsmWorkerId]||STATUSES[0];
+        const rpt=t.reports&&t.reports[currentAsmWorkerId];
+        return `<div class="task-card" id="taskcard_${t.id}">
+          <div class="task-top">
+            <div><div class="task-title">${esc(t.title)}</div>${t.detail?`<div class="task-detail">${esc(t.detail)}</div>`:''}</div>
+            <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end;"><span class="badge ${ti.cls}"><span class="badge-dot"></span>${ti.name}</span>${dueBadge(t)}</div>
+          </div>
+          <div class="task-meta-row"><span>📅 ครบกำหนด ${fmtDate(t.dueDate)}</span></div>
+          ${locationLine(t.location)}
+          <div class="status-btns">
+            <span class="badge ${STATUS_CLASS[st]}">${st}</span>
+            ${st==='มอบหมายแล้ว'?`<button class="btn btn-ghost btn-sm" data-mystatus="${t.id}" data-val="กำลังดำเนินการ">เริ่มดำเนินการ</button>`:''}
+            ${st!=='เสร็จสิ้น'?`<button class="btn btn-primary btn-sm" data-open-report="${t.id}|${currentAsmWorkerId}">รายงานผล / เสร็จสิ้น</button>`:''}
+          </div>
+          ${rpt?`<div class="report-box"><div class="rb-head">รายงานของฉัน</div>${esc(rpt.note||'-')}${mapLink(rpt.location)?` · <a href="${mapLink(rpt.location)}" target="_blank" rel="noopener">ดูตำแหน่งที่รายงาน</a>`:''}<div class="hint" style="margin-top:4px;">${timeAgo(rpt.at)}</div></div>`:''}
+        </div>`;
+      }).join('')}`;
+}
+
+/* ============================= REPORT MODAL ============================= */
+function reportModalHTML(t,w){
+  return `<div class="modal-overlay" id="modalOverlay"><div class="modal">
+    <div class="modal-head"><h3>รายงานผลภารกิจ</h3><button class="modal-close" id="modalClose">&times;</button></div>
+    <div class="modal-body">
+      <div class="hint" style="margin-bottom:10px;">${esc(t.title)} · ${w?esc(w.name):''}</div>
+      <div class="field"><label>รายละเอียดผลการปฏิบัติงาน</label><textarea id="fReportNote" class="full-w" rows="3" placeholder="เช่น เยี่ยมบ้านเรียบร้อย พบผู้ป่วยอาการปกติ..."></textarea></div>
+      <div class="field">
+        <label>ปักหมุดตำแหน่งที่ปฏิบัติงาน (ไม่บังคับ)</label>
+        <div class="pin-row"><button type="button" class="btn btn-ghost btn-sm" id="btnPinReport">📍 ใช้ตำแหน่งปัจจุบัน</button><span class="pin-status" id="reportPinStatus"></span></div>
+      </div>
+      <div class="modal-actions"><button class="btn btn-ghost" id="modalCancel">ยกเลิก</button><button class="btn btn-primary" id="modalSubmitReport">ส่งรายงาน &amp; ทำเครื่องหมายเสร็จสิ้น</button></div>
+    </div></div></div>`;
+}
+function openReportModal(taskId, workerId){
+  const t=tasks.find(x=>x.id===taskId); const w=workerById(workerId);
+  if(!t) return;
+  document.getElementById('modalRoot').innerHTML=reportModalHTML(t,w);
+  let rLat=null, rLng=null;
+  const overlay=document.getElementById('modalOverlay');
+  const close=()=>overlay.remove();
+  document.getElementById('modalClose').onclick=close;
+  document.getElementById('modalCancel').onclick=close;
+  overlay.onclick=(e)=>{ if(e.target===overlay) close(); };
+  document.getElementById('btnPinReport').onclick=()=>{
+    const stEl=document.getElementById('reportPinStatus');
+    if(!('geolocation' in navigator)){ stEl.textContent='อุปกรณ์นี้ไม่รองรับการระบุตำแหน่งอัตโนมัติ'; return; }
+    stEl.textContent='กำลังค้นหาตำแหน่ง...';
+    navigator.geolocation.getCurrentPosition(
+      pos=>{ rLat=pos.coords.latitude; rLng=pos.coords.longitude; stEl.textContent='📍 ปักหมุดสำเร็จ ('+rLat.toFixed(4)+', '+rLng.toFixed(4)+')'; },
+      ()=>{ stEl.textContent='ไม่สามารถระบุตำแหน่งอัตโนมัติได้ในอุปกรณ์นี้'; },
+      {timeout:8000}
+    );
+  };
+  document.getElementById('modalSubmitReport').onclick=async ()=>{
+    const note=document.getElementById('fReportNote').value.trim();
+    t.reports = t.reports || {};
+    t.reports[workerId] = {note, location: (rLat!=null&&rLng!=null)?{lat:rLat,lng:rLng}:null, at:Date.now()};
+    t.status[workerId] = 'เสร็จสิ้น';
+    notifications.push({
+      id: uid('n'), unitId: t.unitId, taskId: t.id, workerId,
+      title: 'อสม. รายงานผลภารกิจ',
+      message: (w?w.name:'อสม.')+' รายงาน "'+t.title+'"'+(note?': '+note.slice(0,60):''),
+      createdAt: Date.now(), readBy: []
+    });
+    await saveTasks(); await saveNotifications();
+    close(); showToast('ส่งรายงานเรียบร้อยแล้ว');
+    renderShell(); renderMain();
+  };
+}
+
+/* ============================= UNITS (admin) ============================= */
+function renderUnits(){
+  return `
+    <div class="section-head"><div><h2>หน่วยบริการ</h2><p>ภาพรวม 5 หน่วยบริการภายใต้สำนักงานสาธารณสุขอำเภอบึงโขงหลง</p></div></div>
+    <div class="worker-grid">
+      ${UNITS.map(u=>{
+        const wc=workers.filter(w=>w.unitId===u.id).length;
+        const tk=tasks.filter(t=>t.unitId===u.id);
+        const openTasks=tk.reduce((s,t)=>s+t.workerIds.filter(wid=>t.status[wid]!=='เสร็จสิ้น').length,0);
+        return `<div class="worker-card">
+          <div class="avatar">${esc(u.short.slice(0,2))}</div>
+          <div class="wname">${esc(u.name)}</div>
+          <div class="wmeta">${wc} อสม. ทั้งหมด</div>
+          <div class="wmeta">${tk.length} ภารกิจ · ${openTasks} งานค้างรายบุคคล</div>
+          <div class="wactions"><button class="btn btn-ghost btn-sm" data-view-unit="${u.id}">ดูรายชื่อ อสม.</button></div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+/* ============================= USERS (admin) ============================= */
+let addUserRole = 'staff';
+function renderUsers(){
+  const list=users.slice().sort((a,b)=> a.role===b.role ? (a.displayName||a.username).localeCompare(b.displayName||b.username,'th') : a.role.localeCompare(b.role));
+  return `
+    <div class="section-head">
+      <div><h2>ผู้ใช้งานระบบ</h2><p>แอดมิน สสอ.บึงโขงหลง เป็นผู้กำหนดสิทธิ์และดูแลบัญชีผู้ใช้งานทั้งหมด</p></div>
+      <button class="btn btn-primary" id="btnAddUser">+ เพิ่มบัญชีผู้ใช้งาน</button>
+    </div>
+    <div class="worker-grid">
+      ${list.map(u=>`
+        <div class="worker-card" style="${u.active===false?'opacity:.5;':''}">
+          <div class="avatar">${esc(initials(u.displayName||u.username))}</div>
+          <div class="wname">${esc(u.displayName||u.username)}${u.active===false?' <span class="badge b-other">ปิดใช้งาน</span>':''}</div>
+          <div class="wmeta">@${esc(u.username)} · ${ROLE_LABEL[u.role]||u.role}</div>
+          ${u.unitId?`<div class="wmeta">${esc(unitShort(u.unitId))}</div>`:''}
+          <div class="wactions">
+            <button class="btn btn-ghost btn-sm" data-reset-pass="${u.id}">รีเซ็ตรหัสผ่าน</button>
+            ${u.id!==currentUser.id?`<button class="btn btn-ghost btn-sm" data-toggle-active="${u.id}">${u.active===false?'เปิดใช้งาน':'ปิดใช้งาน'}</button>`:''}
+            ${u.id!==currentUser.id?`<button class="btn btn-danger-outline btn-sm" data-del-user="${u.id}">ลบ</button>`:''}
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+function renderUserDynamicFields(r){
+  if(r==='admin') return `<div class="field"><label>ชื่อที่แสดง</label><input type="text" id="fUserDisplay" class="full-w" placeholder="ชื่อ-สกุล"></div>`;
+  if(r==='staff') return `<div class="field"><label>หน่วยบริการ</label><select id="fUserUnit" class="full-w">${UNITS.map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('')}</select></div>
+    <div class="field"><label>ชื่อที่แสดง</label><input type="text" id="fUserDisplay" class="full-w" placeholder="ชื่อ-สกุล เจ้าหน้าที่"></div>`;
+  const curUnit = document.getElementById('fUserUnit')?.value || UNITS[0].id;
+  const cands = workers.filter(w=>w.unitId===curUnit && !users.some(u=>u.role==='asm'&&u.workerId===w.id));
+  return `<div class="field"><label>หน่วยบริการ</label><select id="fUserUnit" class="full-w">${UNITS.map(u=>`<option value="${u.id}" ${u.id===curUnit?'selected':''}>${esc(u.name)}</option>`).join('')}</select></div>
+    <div class="field"><label>เลือก อสม.</label>${cands.length===0?`<div class="hint">ไม่มี อสม. ที่ยังไม่มีบัญชีในหน่วยนี้ กรุณาเพิ่มรายชื่อ อสม. ก่อนที่แท็บ "อสม."</div>`:
+      `<select id="fUserWorker" class="full-w">${cands.map(w=>`<option value="${w.id}">${esc(w.name)}</option>`).join('')}</select>`}</div>`;
+}
+function addUserModalHTML(){
+  addUserRole='staff';
+  return `<div class="modal-overlay" id="modalOverlay"><div class="modal">
+    <div class="modal-head"><h3>เพิ่มบัญชีผู้ใช้งาน</h3><button class="modal-close" id="modalClose">&times;</button></div>
+    <div class="modal-body">
+      <div class="field"><label>ประเภทบัญชี</label>
+        <div class="chip-select" id="userRoleChips">
+          <div class="chip-opt selected" data-role="staff">จนท.หน่วยบริการ</div>
+          <div class="chip-opt" data-role="asm">อสม.</div>
+          <div class="chip-opt" data-role="admin">แอดมิน สสอ.</div>
+        </div>
+      </div>
+      <div id="userDynamicFields">${renderUserDynamicFields('staff')}</div>
+      <div class="field"><label>ชื่อผู้ใช้งาน (username)</label><input type="text" id="fUserName" class="full-w" placeholder="เช่น staff.dongbang"></div>
+      <div class="field"><label>รหัสผ่านเริ่มต้น</label>
+        <div class="pin-row"><input type="text" id="fUserPass" class="full-w" style="flex:1;" placeholder="กำหนดรหัสผ่าน"><button type="button" class="btn btn-ghost btn-sm" id="btnRandPass">สุ่ม</button></div>
+      </div>
+      <div class="field-error" id="userFormError"></div>
+      <div class="modal-actions"><button class="btn btn-ghost" id="modalCancel">ยกเลิก</button><button class="btn btn-primary" id="btnSaveUser">เพิ่มบัญชี</button></div>
+    </div></div></div>`;
+}
+function bindUserUnitChangeIfAsm(){
+  const unitSel=document.getElementById('fUserUnit');
+  if(unitSel && addUserRole==='asm'){
+    unitSel.onchange=()=>{ document.getElementById('userDynamicFields').innerHTML=renderUserDynamicFields('asm'); bindUserUnitChangeIfAsm(); };
+  }
+}
+function openAddUserModal(){
+  document.getElementById('modalRoot').innerHTML=addUserModalHTML();
+  const overlay=document.getElementById('modalOverlay');
+  const close=()=>overlay.remove();
+  document.getElementById('modalClose').onclick=close;
+  document.getElementById('modalCancel').onclick=close;
+  overlay.onclick=(e)=>{ if(e.target===overlay) close(); };
+  document.getElementById('userRoleChips').querySelectorAll('.chip-opt').forEach(c=>{
+    c.onclick=()=>{
+      document.getElementById('userRoleChips').querySelectorAll('.chip-opt').forEach(x=>x.classList.remove('selected'));
+      c.classList.add('selected'); addUserRole=c.dataset.role;
+      document.getElementById('userDynamicFields').innerHTML=renderUserDynamicFields(addUserRole);
+      bindUserUnitChangeIfAsm();
+    };
+  });
+  document.getElementById('btnRandPass').onclick=()=>{
+    const chars='ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'; let np='';
+    for(let i=0;i<8;i++) np+=chars[Math.floor(Math.random()*chars.length)];
+    document.getElementById('fUserPass').value=np;
+  };
+  document.getElementById('btnSaveUser').onclick=async ()=>{
+    const errEl=document.getElementById('userFormError'); errEl.style.display='none';
+    const uname=document.getElementById('fUserName').value.trim();
+    const pass=document.getElementById('fUserPass').value;
+    if(!uname || !pass || pass.length<4){ errEl.textContent='กรุณากรอกชื่อผู้ใช้งาน และรหัสผ่านอย่างน้อย 4 ตัวอักษร'; errEl.style.display='block'; return; }
+    if(users.some(u=>u.username.toLowerCase()===uname.toLowerCase())){ errEl.textContent='มีชื่อผู้ใช้งานนี้อยู่แล้ว กรุณาใช้ชื่ออื่น'; errEl.style.display='block'; return; }
+    let newUser = {id:uid('usr'), username:uname, password:pass, role:addUserRole, active:true};
+    if(addUserRole==='staff'){
+      newUser.unitId = document.getElementById('fUserUnit').value;
+      newUser.displayName = document.getElementById('fUserDisplay').value.trim() || uname;
+    } else if(addUserRole==='asm'){
+      const wSel = document.getElementById('fUserWorker');
+      if(!wSel){ errEl.textContent='ไม่มี อสม. ที่สามารถสร้างบัญชีได้ในหน่วยนี้'; errEl.style.display='block'; return; }
+      const w = workerById(wSel.value);
+      newUser.unitId = document.getElementById('fUserUnit').value;
+      newUser.workerId = w.id;
+      newUser.displayName = w.name;
+    } else {
+      newUser.displayName = document.getElementById('fUserDisplay').value.trim() || uname;
+    }
+    users.push(newUser);
+    await saveUsers(); close();
+    showToast('เพิ่มบัญชีผู้ใช้งานเรียบร้อยแล้ว');
+    renderMain();
+  };
+}
+function showResetPasswordModal(u,pass){
+  document.getElementById('modalRoot').innerHTML = `<div class="modal-overlay" id="modalOverlay"><div class="modal" style="max-width:400px;">
+    <div class="modal-head"><h3>รีเซ็ตรหัสผ่านสำเร็จ</h3><button class="modal-close" id="modalClose">&times;</button></div>
+    <div class="modal-body">
+      <p style="font-size:13.5px;">รหัสผ่านใหม่ของ <b>${esc(u.displayName||u.username)}</b> (@${esc(u.username)})</p>
+      <div style="background:var(--surface-soft);border-radius:10px;padding:14px;text-align:center;font-size:20px;font-weight:800;letter-spacing:2px;margin:10px 0;">${esc(pass)}</div>
+      <p class="hint">กรุณาแจ้งรหัสผ่านนี้ให้ผู้ใช้งานทราบผ่านช่องทางที่ปลอดภัย และแนะนำให้เปลี่ยนรหัสผ่านหลังเข้าใช้งาน</p>
+      <div class="modal-actions"><button class="btn btn-primary" id="modalClose2">ปิด</button></div>
+    </div></div></div>`;
+  const close=()=>document.getElementById('modalOverlay').remove();
+  document.getElementById('modalClose').onclick=close;
+  document.getElementById('modalClose2').onclick=close;
+  document.getElementById('modalOverlay').onclick=(e)=>{ if(e.target.id==='modalOverlay') close(); };
+}
+async function resetUserPassword(id){
+  const u=users.find(x=>x.id===id); if(!u) return;
+  const chars='ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789'; let np='';
+  for(let i=0;i<8;i++) np+=chars[Math.floor(Math.random()*chars.length)];
+  u.password=np; await saveUsers(); showResetPasswordModal(u,np);
+}
+
+/* ============================= CHANGE OWN PASSWORD ============================= */
+function openChangePasswordModal(){
+  document.getElementById('modalRoot').innerHTML = `<div class="modal-overlay" id="modalOverlay"><div class="modal" style="max-width:400px;">
+    <div class="modal-head"><h3>เปลี่ยนรหัสผ่าน</h3><button class="modal-close" id="modalClose">&times;</button></div>
+    <div class="modal-body">
+      <div class="field"><label>รหัสผ่านปัจจุบัน</label><input type="password" id="fCurPass" class="full-w"></div>
+      <div class="field"><label>รหัสผ่านใหม่</label><input type="password" id="fNewPass" class="full-w"></div>
+      <div class="field"><label>ยืนยันรหัสผ่านใหม่</label><input type="password" id="fNewPass2" class="full-w"></div>
+      <div class="field-error" id="passFormError"></div>
+      <div class="modal-actions"><button class="btn btn-ghost" id="modalCancel">ยกเลิก</button><button class="btn btn-primary" id="btnSavePass">บันทึก</button></div>
+    </div></div></div>`;
+  const close=()=>document.getElementById('modalOverlay').remove();
+  document.getElementById('modalClose').onclick=close;
+  document.getElementById('modalCancel').onclick=close;
+  document.getElementById('modalOverlay').onclick=(e)=>{ if(e.target.id==='modalOverlay') close(); };
+  document.getElementById('btnSavePass').onclick=async ()=>{
+    const err=document.getElementById('passFormError'); err.style.display='none';
+    const cur=document.getElementById('fCurPass').value, n1=document.getElementById('fNewPass').value, n2=document.getElementById('fNewPass2').value;
+    if(cur!==currentUser.password){ err.textContent='รหัสผ่านปัจจุบันไม่ถูกต้อง'; err.style.display='block'; return; }
+    if(n1.length<4){ err.textContent='รหัสผ่านใหม่ต้องมีอย่างน้อย 4 ตัวอักษร'; err.style.display='block'; return; }
+    if(n1!==n2){ err.textContent='รหัสผ่านใหม่ทั้งสองช่องไม่ตรงกัน'; err.style.display='block'; return; }
+    currentUser.password=n1; await saveUsers(); close(); showToast('เปลี่ยนรหัสผ่านเรียบร้อยแล้ว');
+  };
+}
+
+/* ============================= EVENT HANDLERS ============================= */
+function attachMainHandlers(){
+  const main=document.getElementById('main');
+
+  main.querySelectorAll('[data-goto]').forEach(b=>{ b.onclick=()=>{ activeTab=b.dataset.goto; renderShell(); renderMain(); }; });
+  main.querySelectorAll('.unit-node, .mini-unit-row').forEach(el=>{
+    el.onclick=()=>{ const id=el.dataset.unit; dashUnitFilter=(id==='__clear__'||dashUnitFilter===id)?null:id; renderMain(); };
+  });
+  main.querySelectorAll('[data-view-unit]').forEach(b=>{ b.onclick=()=>{ workerFilterUnit=b.dataset.viewUnit; activeTab='workers'; renderShell(); renderMain(); }; });
+
+  const addBtn=document.getElementById('btnAddWorker'); if(addBtn) addBtn.onclick=()=>openWorkerModal(null);
+  main.querySelectorAll('[data-edit-worker]').forEach(b=>{ b.onclick=()=>openWorkerModal(b.dataset.editWorker); });
+  main.querySelectorAll('[data-del-worker]').forEach(b=>{
+    b.onclick=async ()=>{
+      const w=workerById(b.dataset.delWorker); if(!w) return;
+      if(!confirm('ลบ อสม. "'+w.name+'" ออกจากระบบ? (บัญชีผู้ใช้งานของ อสม. คนนี้ ถ้ามี จะถูกลบไปด้วย)')) return;
+      workers=workers.filter(x=>x.id!==w.id);
+      const hadAccount = users.some(u=>u.role==='asm'&&u.workerId===w.id);
+      users=users.filter(u=>!(u.role==='asm'&&u.workerId===w.id));
+      tasks.forEach(t=>{ t.workerIds=t.workerIds.filter(id=>id!==w.id); delete t.status[w.id]; if(t.reports) delete t.reports[w.id]; });
+      await saveWorkers(); await saveTasks(); if(hadAccount) await saveUsers();
+      showToast('ลบรายชื่อแล้ว'); renderMain();
+    };
+  });
+  const searchInput=document.getElementById('workerSearch');
+  if(searchInput) searchInput.oninput=(e)=>{ workerSearch=e.target.value; renderMain(); const el=document.getElementById('workerSearch'); if(el){ el.focus(); el.selectionStart=el.selectionEnd=el.value.length; } };
+  const unitFilterSel=document.getElementById('workerUnitFilter'); if(unitFilterSel) unitFilterSel.onchange=(e)=>{ workerFilterUnit=e.target.value||null; renderMain(); };
+
+  // assign
+  const typeChips=document.getElementById('typeChips');
+  if(typeChips) typeChips.querySelectorAll('.chip-opt').forEach(c=>{ c.onclick=()=>{ typeChips.querySelectorAll('.chip-opt').forEach(x=>x.classList.remove('selected')); c.classList.add('selected'); }; });
+  const assignUnitSel=document.getElementById('fAssignUnit');
+  if(assignUnitSel) assignUnitSel.onchange=(e)=>{ assignUnitId=e.target.value; assignSelectedWorkers=new Set(); renderMain(); };
+  const pickList=document.getElementById('workerPickList');
+  if(pickList) pickList.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.onchange=()=>{ if(cb.checked) assignSelectedWorkers.add(cb.dataset.wid); else assignSelectedWorkers.delete(cb.dataset.wid);
+      document.getElementById('selCount').textContent='เลือกแล้ว '+assignSelectedWorkers.size+' คน'; };
+  });
+  const selAll=document.getElementById('selAllBtn'); if(selAll) selAll.onclick=()=>{ workers.filter(w=>w.unitId===assignUnitId).forEach(w=>assignSelectedWorkers.add(w.id)); renderMain(); };
+  const selClear=document.getElementById('selClearBtn'); if(selClear) selClear.onclick=()=>{ assignSelectedWorkers=new Set(); renderMain(); };
+  main.querySelectorAll('[data-village]').forEach(c=>{ c.onclick=()=>{ const v=c.dataset.village; workers.filter(w=>w.unitId===assignUnitId&&w.village===v).forEach(w=>assignSelectedWorkers.add(w.id)); renderMain(); }; });
+
+  const btnPin=document.getElementById('btnPinLocation');
+  if(btnPin) btnPin.onclick=()=>{
+    const stEl=document.getElementById('pinStatus');
+    if(!('geolocation' in navigator)){ stEl.textContent='อุปกรณ์นี้ไม่รองรับการระบุตำแหน่งอัตโนมัติ กรุณากรอกพิกัดด้วยตนเอง'; return; }
+    stEl.textContent='กำลังค้นหาตำแหน่ง...';
+    navigator.geolocation.getCurrentPosition(
+      pos=>{ document.getElementById('fLocLat').value=pos.coords.latitude.toFixed(6); document.getElementById('fLocLng').value=pos.coords.longitude.toFixed(6); stEl.textContent='📍 ปักหมุดสำเร็จ'; },
+      ()=>{ stEl.textContent='ไม่สามารถระบุตำแหน่งอัตโนมัติได้ กรุณากรอกพิกัดด้วยตนเอง หรือคัดลอกจาก Google Maps'; },
+      {timeout:8000}
+    );
+  };
+  const sendBtn=document.getElementById('btnSendTask');
+  if(sendBtn) sendBtn.onclick=async ()=>{
+    const title=document.getElementById('fTaskTitle').value.trim();
+    if(!title){ showToast('กรุณากรอกชื่อภารกิจ'); return; }
+    if(assignSelectedWorkers.size===0){ showToast('กรุณาเลือก อสม. อย่างน้อย 1 คน'); return; }
+    const typeId=document.querySelector('#typeChips .chip-opt.selected')?.dataset.type||'other';
+    const detail=document.getElementById('fTaskDetail').value.trim();
+    const dueDate=document.getElementById('fTaskDue').value;
+    const latStr=document.getElementById('fLocLat').value.trim(), lngStr=document.getElementById('fLocLng').value.trim();
+    const locLabel=document.getElementById('fLocLabel').value.trim();
+    let location=null;
+    if(latStr && lngStr && !isNaN(parseFloat(latStr)) && !isNaN(parseFloat(lngStr))) location={lat:parseFloat(latStr), lng:parseFloat(lngStr), label:locLabel};
+    const workerIds=[...assignSelectedWorkers];
+    const status={}; workerIds.forEach(id=>status[id]=STATUSES[0]);
+    tasks.push({id:uid('t'), title, typeId, detail, dueDate, unitId:assignUnitId, location, workerIds, status, reports:{}, createdAt:Date.now()});
+    await saveTasks();
+    assignSelectedWorkers=new Set();
+    showToast('ส่งภารกิจเรียบร้อยแล้ว');
+    activeTab='tasks'; if(role==='admin') taskFilterUnit=assignUnitId;
+    renderShell(); renderMain();
+  };
+
+  // tasks
+  const taskUnitFilterSel=document.getElementById('taskUnitFilter'); if(taskUnitFilterSel) taskUnitFilterSel.onchange=(e)=>{ taskFilterUnit=e.target.value||null; renderMain(); };
+  const taskStatusFilterSel=document.getElementById('taskStatusFilter'); if(taskStatusFilterSel) taskStatusFilterSel.onchange=(e)=>{ taskFilterStatus=e.target.value; renderMain(); };
+  main.querySelectorAll('.statusSel').forEach(sel=>{
+    sel.onchange=async ()=>{
+      const t=tasks.find(x=>x.id===sel.dataset.task); if(!t) return;
+      t.status[sel.dataset.worker]=sel.value; await saveTasks(); showToast('อัปเดตสถานะแล้ว'); renderShell(); renderMain();
+    };
+  });
+  main.querySelectorAll('[data-open-report]').forEach(b=>{
+    b.onclick=()=>{ const [taskId, workerId]=b.dataset.openReport.split('|'); openReportModal(taskId, workerId); };
+  });
+
+  // my tasks (asm)
+  main.querySelectorAll('[data-mystatus]').forEach(b=>{
+    b.onclick=async ()=>{ const t=tasks.find(x=>x.id===b.dataset.mystatus); if(!t) return; t.status[currentAsmWorkerId]=b.dataset.val; await saveTasks(); showToast('อัปเดตสถานะแล้ว'); renderShell(); renderMain(); };
+  });
+
+  // units
+  // (data-view-unit handled above)
+
+  // users
+  const btnAddUser=document.getElementById('btnAddUser'); if(btnAddUser) btnAddUser.onclick=openAddUserModal;
+  main.querySelectorAll('[data-reset-pass]').forEach(b=>{ b.onclick=()=>{ if(confirm('ยืนยันการรีเซ็ตรหัสผ่านของผู้ใช้งานนี้?')) resetUserPassword(b.dataset.resetPass); }; });
+  main.querySelectorAll('[data-toggle-active]').forEach(b=>{
+    b.onclick=async ()=>{
+      const u=users.find(x=>x.id===b.dataset.toggleActive); if(!u) return;
+      if(u.role==='admin' && u.active!==false && users.filter(x=>x.role==='admin'&&x.active!==false).length<=1){ showToast('ต้องมีบัญชีแอดมินที่ใช้งานได้อย่างน้อย 1 บัญชี'); return; }
+      u.active = u.active===false ? true : false;
+      await saveUsers(); renderMain();
+    };
+  });
+  main.querySelectorAll('[data-del-user]').forEach(b=>{
+    b.onclick=async ()=>{
+      const u=users.find(x=>x.id===b.dataset.delUser); if(!u) return;
+      if(u.role==='admin' && users.filter(x=>x.role==='admin').length<=1){ showToast('ต้องมีบัญชีแอดมินอย่างน้อย 1 บัญชี'); return; }
+      if(!confirm('ลบบัญชีผู้ใช้งาน @'+u.username+' ?')) return;
+      users=users.filter(x=>x.id!==u.id); await saveUsers(); showToast('ลบบัญชีแล้ว'); renderMain();
+    };
+  });
+}
+
+/* ============================= BOOT ============================= */
+async function boot(){
+  await loadData();
+  if(users.length===0){
+    users.push({id:uid('usr'), username:'admin', password:'Bkl@2569', role:'admin', displayName:'ผู้ดูแลระบบ สสอ.บึงโขงหลง', active:true});
+    await saveUsers();
+  }
+  renderLogin();
+}
+boot();
+</script>
+</body>
+</html>
