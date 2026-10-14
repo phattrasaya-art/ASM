@@ -479,21 +479,57 @@ function renderLogin(){
   document.getElementById('loginPass').onkeydown = (e)=>{ if(e.key==='Enter') attemptLogin(); };
   document.getElementById('loginUser').onkeydown = (e)=>{ if(e.key==='Enter') document.getElementById('loginPass').focus(); };
 }
+
 function attemptLogin(){
-  const uname=document.getElementById('loginUser').value.trim();
-  const pass=document.getElementById('loginPass').value;
-  const err=document.getElementById('loginError');
-  const u=users.find(x=>x.username.toLowerCase()===uname.toLowerCase() && x.active!==false);
-  if(!u || u.password!==pass){ err.textContent='ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง'; err.style.display='block'; return; }
-  currentUser=u; role=u.role;
-  if(u.role!=='admin') staffUnitId=u.unitId;
-  if(u.role==='asm'){ currentAsmWorkerId=u.workerId; activeTab='mytasks'; }
-  else activeTab='dashboard';
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('appShell').style.display='block';
-  renderShell(); renderMain();
+  const uname = document.getElementById('loginUser').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+
+  const u = users.find(
+    x => x.username.toLowerCase() === uname.toLowerCase()
+      && x.active !== false
+  );
+
+  if(!u || u.password !== pass){
+    err.textContent = 'ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง';
+    err.style.display = 'block';
+    return;
+  }
+
+  currentUser = u;
+  role = u.role;
+
+  if(u.role !== 'admin') staffUnitId = u.unitId;
+
+  if(u.role === 'asm'){
+    currentAsmWorkerId = u.workerId;
+    activeTab = 'mytasks';
+  } else {
+    activeTab = 'dashboard';
+  }
+
+  // จำสถานะเข้าสู่ระบบในเบราว์เซอร์
+  localStorage.setItem('bkl_asm_login_user', u.id);
+
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appShell').style.display = 'block';
+
+  renderShell();
+  renderMain();
 }
-function logout(){ currentUser=null; role='admin'; activeTab='dashboard'; renderLogin(); }
+
+function logout(){
+  // ล้างสถานะเมื่อผู้ใช้กดออกจากระบบเอง
+  localStorage.removeItem('bkl_asm_login_user');
+
+  currentUser = null;
+  currentAsmWorkerId = null;
+  role = 'admin';
+  activeTab = 'dashboard';
+
+  renderLogin();
+}
+
 
 /* ============================= SHELL ============================= */
 function renderShell(){
@@ -1223,14 +1259,55 @@ function attachMainHandlers(){
 }
 
 /* ============================= BOOT ============================= */
+
 async function boot(){
   await loadData();
-  if(users.length===0){
-    users.push({id:uid('usr'), username:'admin', password:'Bkl@2569', role:'admin', displayName:'ผู้ดูแลระบบ สสอ.บึงโขงหลง', active:true});
+
+  // สร้างบัญชีแอดมินเริ่มต้น หากยังไม่มีผู้ใช้
+  if(users.length === 0){
+    users.push({
+      id: uid('usr'),
+      username: 'admin',
+      password: 'Bkl@2569',
+      role: 'admin',
+      displayName: 'ผู้ดูแลระบบ สสอ.บึงโขงหลง',
+      active: true
+    });
     await saveUsers();
   }
-  renderLogin();
+
+  // ตรวจสอบบัญชีที่เคยเข้าสู่ระบบ
+  const savedUserId = localStorage.getItem('bkl_asm_login_user');
+  const u = users.find(
+    x => x.id === savedUserId && x.active !== false
+  );
+
+  if(u){
+    currentUser = u;
+    role = u.role;
+
+    if(u.role !== 'admin'){
+      staffUnitId = u.unitId;
+    }
+
+    if(u.role === 'asm'){
+      currentAsmWorkerId = u.workerId;
+      activeTab = 'mytasks';
+    } else {
+      activeTab = 'dashboard';
+    }
+
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appShell').style.display = 'block';
+
+    renderShell();
+    renderMain();
+  } else {
+    localStorage.removeItem('bkl_asm_login_user');
+    renderLogin();
+  }
 }
+
 boot();
 </script>
 </body>
